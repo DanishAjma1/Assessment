@@ -1,0 +1,26 @@
+{
+  "name": "assessment",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "dev": "concurrently \"npm run server \" \"npm run onlie-courses-purchasing \"",
+    "onlie-courses-purchasing": "cd online-courses-purchasing && npm start",
+    "server":"cd server && npm start"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/DanishAjma1/Assessment.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/DanishAjma1/Assessment/issues"
+  },
+  "homepage": "https://github.com/DanishAjma1/Assessment#readme",
+  "devDependencies": {
+    "concurrently": "^9.2.0"
+  }
+}

@@ -1,47 +1,53 @@
 import { Router } from "express";
 import { connectDB } from "../config/mongodbConnection.js";
 import { User } from "../models/allModels.js";
-import bcrypt from "bcryptjs";
+import bcryptjs from "bcryptjs";
 const userRouter = Router();
 
-userRouter.post("/auth/register-user", async (req, res) => {
+userRouter.post("/register-user", async (req, res) => {
   try {
     const { email, password, role } = req.body;
-    const user = {
-      email,
-      password,
-      role,
-    };
-    const hashedPassword = bcrypt.hash(password, 10);
-    user.password = hashedPassword;
+    if (!email || !password) {
+      return res.status(400).json({ message: "Email and password required" });
+    }
+
+    const hashedPassword = await bcryptjs.hash(password, 10);
+    console.log("Password hashed");
+
+    const user = { email, password: hashedPassword, role };
+
     await connectDB();
-    const insertUser = await User.insertOne(user);
-    res.status(201).json({ message: "the user is registered.." });
+
+    // If using Mongoose:
+    const insertUser = await User.create(user);
+
+    console.log("User inserted:", insertUser);
+
+    res.status(201).json({ message: "The user is registered" });
   } catch (err) {
-    res.status(403).json({ message: "Bad request" });
+    console.error("Error registering user:", err);
+    res.status(500).json({ message: err.message }); // use 500 for server errors
   }
 });
 
-userRouter.post("/auth/login-user", async (req, res) => {
+userRouter.post("/login-user", async (req, res) => {
   try {
     const { email, password, role } = req.body;
-    const user = {
-      email,
-      password,
-      role,
-    };
+    if (!email || !password) {
+      return res.status(400).json({ message: "Email and password required" });
+    }
     await connectDB();
     const userFromDB = await User.findOne({ email });
-    if (!userFromDB) {
-      res.status(404).json({ message: "User not found" });
+    if (!userFromDB || role !== userFromDB.role  ) {
+      res.status(404).json({ message: "Either user not found or you are trying to sign in with wrong role." });
     } else {
       const hashedPassword = userFromDB.password;
-      const isPasswordMatch = bcrypt.compareSync(password, hashedPassword);
+      const isPasswordMatch = bcryptjs.compareSync(password, hashedPassword);
       if (!isPasswordMatch) {
         res.status(401).json({ message: "Invalid credentials" });
       } else {
         req.session.user = {
-          id: userFromDB._id,
+          id: userFromDB.id,
           email: userFromDB.email,
           role: userFromDB.role,
         };
@@ -49,13 +55,25 @@ userRouter.post("/auth/login-user", async (req, res) => {
       res.status(200).json({
         message: "User logged in successfully",
         user: {
-          id: userFromDB._id,
+          id: userFromDB.id,
         },
       });
     }
   } catch (err) {
     res.status(403).json({ message: "Bad request" });
   }
+});
+
+userRouter.get("/logout", (req, res) => {
+  req.session.destroy((err) => {
+    if (err) {
+      console.log(err);
+    } else {
+      res.clearCookie("connect.sid");
+      res.cookie.Date = new Date(0);
+      res.status(200).json({ message: "User logged out successfully" });
+    }
+  });
 });
 
 export default userRouter;
