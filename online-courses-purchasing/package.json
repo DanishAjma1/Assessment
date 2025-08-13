@@ -4,6 +4,7 @@
   "private": true,
   "type": "module",
   "dependencies": {
+    "@mux/mux-player": "^3.5.3",
     "@testing-library/dom": "^*",
     "@testing-library/jest-dom": "^*",
     "@testing-library/react": "^*",

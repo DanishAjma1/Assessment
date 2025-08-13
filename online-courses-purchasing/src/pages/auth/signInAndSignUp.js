@@ -1,24 +1,25 @@
 import axios from "axios";
 import { useState } from "react";
 // import axios from "axios";
-import { useLocation } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 export default function SignUpAndSignIn() {
-  // const url = "http://localhost:5000";
+  const url = "http://localhost:5000";
   const location = useLocation();
-  const {role} = location.state;
+  const navigate = useNavigate();
+  const { role } = location.state;
   const user = null;
   const [isSignInForm, setIsSignInForm] = useState(true);
 
   const [signInUser, setSignInUser] = useState({
     email: "",
     password: "",
-    role:role,
+    role: role,
   });
 
   const [signUpUser, setSignUpUser] = useState({
     email: "",
     password: "",
-    role:role,
+    role: role,
     confirmPassword: "",
   });
 
@@ -32,11 +33,33 @@ export default function SignUpAndSignIn() {
 
   const handleSubmitSignIn = async (e) => {
     e.preventDefault();
-    await axios.post("/auth/register-user")
+    await axios
+      .post(url + "/auth/login-user", signInUser, { withCredentials: true })
+      .then(() => {
+        alert("User logged in successfully");
+        navigate("/");
+      })
+      .catch((err) => {
+        console.log(err.message);
+      });
   };
 
-  const handleSubmitSignUp = (e) => {
+  const handleSubmitSignUp = async (e) => {
     e.preventDefault();
+    console.log(signUpUser);
+    if (signUpUser.password === signUpUser.confirmPassword) {
+      try {
+        await axios.post(url + "/auth/register-user", signUpUser, {
+          withCredentials: true,
+          headers: { "Content-Type": "application/json" },
+        });
+        alert("User created successfully");
+      } catch (err) {
+        console.error(err);
+      }
+    } else {
+      alert("Passwords do not match");
+    }
   };
   return (
     <div className="h-screen flex justify-center items-center">
@@ -106,7 +129,7 @@ export default function SignUpAndSignIn() {
 
               <input
                 type="password"
-                placeholder="password"
+                placeholder="confirmPassword"
                 name="confirmPassword"
                 className="px-5 py-1 border-2 rounded-md"
                 onChange={handleChangeSignUp}

@@ -13,16 +13,13 @@ const CourseSchema = new mongoose.Schema({
   description: String,
   instructor: {type: mongoose.Schema.Types.ObjectId, ref:'User'},
   price: Number,
-  materials: [{ type: mongoose.Schema.Types.ObjectId, ref:'Material' }],
-  liveSession: { type: mongoose.Schema.Types.ObjectId, ref:'LiveSession' },
 });
 
 // Material (files)
 const MaterialSchema = new mongoose.Schema({
   course: {type: mongoose.Schema.Types.ObjectId, ref:'Course'},
-  instructor: {type: mongoose.Schema.Types.ObjectId, ref:'User'},
   filename: String,
-  s3Key: String,
+  s3key: String,
   contentType: String,
 });
 
@@ -30,9 +27,8 @@ const MaterialSchema = new mongoose.Schema({
 const PurchaseSchema = new mongoose.Schema({
   course: {type: mongoose.Schema.Types.ObjectId, ref:'Course'},
   student: {type: mongoose.Schema.Types.ObjectId, ref:'User'},
-  amountCents: Number,
+  amount: Number,
   currency: String,
-  stripePaymentIntentId: String,
   stripeCheckoutSessionId: String,
   statusOfPurchase: {type: String, enum:['pending','paid','failed'], default:'pending'},
 });
@@ -40,9 +36,11 @@ const PurchaseSchema = new mongoose.Schema({
 // Live session
 const LiveSessionSchema = new mongoose.Schema({
   course: {type: mongoose.Schema.Types.ObjectId, ref:'Course'},
+  streamId:String,
   muxStreamId: String,
   playbackId: String,
   isActive: Boolean,
+  date:Date,
 });
 
 //We can also define a model for each schema separately..
