@@ -112,7 +112,7 @@ Student can now view all materials of the purchased course.
 
 # 1\. Clone the repository
 
-git clone https://github.com/yourusername/online-learning-platform.git
+git clone https://github.com/DanishAjam1/online-learning-platform.git
 cd online-learning-platform
 
 # 2\. Install dependencies

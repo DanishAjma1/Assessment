@@ -15,5 +15,6 @@ yarn-debug.log*
 yarn-error.log*
 
 # Ignore all package-lock.json files
+package-lock.json
 server/package-lock.json
 online-courses-purchasing/package-lock.json
