@@ -9,7 +9,8 @@ import purchaseRouter from "./app/routes/purchase.js";
 import sessionMiddleware from "./app/middleware/auth/sessionMiddleware.js";
 import cookieParser from "cookie-parser";
 import isUserLoggedIn from "./app/utils/checkUser.js";
-import presignRouter from "./app/routes/presign/presignRouter.js";
+import presignRouter from "./app/routes/presign-url/presignRouter.js";
+import stripeRouter from "./app/routes/stripe/stripe-session.js";
 const app = express();
 const server = createServer(app);
 
@@ -30,6 +31,7 @@ app.get("/isuserloggedin", isUserLoggedIn, (req, res) => {
     .json({ message: "the user is authentic..", user: req.session.user });
 });
 app.use("/",presignRouter);
+app.use("/", stripeRouter);
 app.use("/instructor", courseRouter);
 app.use("/instructor", liveSessionRouter);
 app.use("/instructor", materialRouter);

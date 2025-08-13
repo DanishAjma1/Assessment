@@ -38,8 +38,13 @@ userRouter.post("/login-user", async (req, res) => {
     }
     await connectDB();
     const userFromDB = await User.findOne({ email });
-    if (!userFromDB || role !== userFromDB.role  ) {
-      res.status(404).json({ message: "Either user not found or you are trying to sign in with wrong role." });
+    if (!userFromDB || role !== userFromDB.role) {
+      res
+        .status(404)
+        .json({
+          message:
+            "Either user not found or you are trying to sign in with wrong role.",
+        });
     } else {
       const hashedPassword = userFromDB.password;
       const isPasswordMatch = bcryptjs.compareSync(password, hashedPassword);
@@ -65,15 +70,9 @@ userRouter.post("/login-user", async (req, res) => {
 });
 
 userRouter.get("/logout", (req, res) => {
-  req.session.destroy((err) => {
-    if (err) {
-      console.log(err);
-    } else {
-      res.clearCookie("connect.sid");
-      res.cookie.Date = new Date(0);
-      res.status(200).json({ message: "User logged out successfully" });
-    }
-  });
+  res.clearCookie("connect.sid");
+  res.cookie.Date = new Date(0);
+  res.status(200).json({ message: "User logged out successfully" });
 });
 
 export default userRouter;

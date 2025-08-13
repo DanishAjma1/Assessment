@@ -27,9 +27,8 @@ const MaterialSchema = new mongoose.Schema({
 const PurchaseSchema = new mongoose.Schema({
   course: {type: mongoose.Schema.Types.ObjectId, ref:'Course'},
   student: {type: mongoose.Schema.Types.ObjectId, ref:'User'},
-  amountCents: Number,
+  amount: Number,
   currency: String,
-  stripePaymentIntentId: String,
   stripeCheckoutSessionId: String,
   statusOfPurchase: {type: String, enum:['pending','paid','failed'], default:'pending'},
 });
@@ -37,7 +36,7 @@ const PurchaseSchema = new mongoose.Schema({
 // Live session
 const LiveSessionSchema = new mongoose.Schema({
   course: {type: mongoose.Schema.Types.ObjectId, ref:'Course'},
-  instructor: {type: mongoose.Schema.Types.ObjectId, ref:'User'},
+  streamId:String,
   muxStreamId: String,
   playbackId: String,
   isActive: Boolean,

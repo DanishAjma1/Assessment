@@ -95,7 +95,9 @@ export default function CourseForm() {
                   className="bg-red-500 text-white px-3 py-1 rounded-md shadow-sm"
                   onClick={(e) => {
                     e.preventDefault();
-                    navigate("/instructor/material", { state: { course: c } });
+                    localStorage.removeItem("course");
+                    localStorage.setItem("course",JSON.stringify(c))
+                    navigate("/instructor/material");
                   }}
                 >
                   Check Material

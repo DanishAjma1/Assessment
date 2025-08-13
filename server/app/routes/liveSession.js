@@ -1,5 +1,6 @@
 import { Router } from "express";
 import { connectDB } from "../config/mongodbConnection.js";
+import Mux from "@mux/mux-node";
 import { LiveSession } from "../models/allModels.js";
 const liveSessionRouter = Router();
 
@@ -10,40 +11,39 @@ const { Video } = new Mux({
 
 liveSessionRouter.post("/insert-live-session", async (req, res) => {
   try {
-     const liveStream = await Video.LiveStreams.create({
-      playback_policy: ["public"], // or "signed" for restricted playback
+    const liveStream = await Video.LiveStreams.create({
+      playback_policy: ["public"],
       new_asset_settings: { playback_policy: ["public"] },
     });
 
-       // liveStream will have: id, stream_key, playback_ids
     const muxStreamId = liveStream.id;
-    const streamKey = liveStream.stream_key; // give to instructor privately
+    const streamId = liveStream.stream_key;
     const playbackId = liveStream.playback_ids[0].id;
 
-    const { course,isActive,date } = req.body;
+    const { course, date } = req.body;
     const liveSession = {
       course,
       muxStreamId,
       playbackId,
-      instructor:req.session.user.id,
-      isActive,
+      streamId,
+      isActive: true,
       date,
     };
     await connectDB();
-    const insertLiveSession = await LiveSession.insertOne(liveSession);
+    await LiveSession.create(liveSession);
     res.status(201).json({ message: "the liveSession is inserted.." });
   } catch (err) {
     res.status(403).json({ message: "Bad request" });
   }
 });
-liveSessionRouter.get("/get-live-sessions", async (req, res) => {
+liveSessionRouter.get("/get-live-session/:id", async (req, res) => {
   try {
-    const sessions = await LiveSession.find().populate("course", "title");
-    res.json(sessions);
+    const id = req.params.id;
+    const sessions = await LiveSession.find({course:id})
+    res.json({sessions});
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
 });
-
 
 export default liveSessionRouter;

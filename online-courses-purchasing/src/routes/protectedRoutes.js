@@ -22,7 +22,7 @@ export default function ProtectedRoutes({ allowedRole }) {
         .catch((error) => {
           setIsAuthentic(false);
           console.log(error.message);
-          navigate("/auth/signupandsignin",{state:{role:role}});
+          navigate("/choosetosignin",{state:{role:role}});
         });
     };
     checkUser();
@@ -32,7 +32,7 @@ export default function ProtectedRoutes({ allowedRole }) {
   }
   if (!isAuthentic) {
     return (
-      <Navigate to="/" replace />
+      <Navigate to="/choosetosignin" replace />
     );
   }
   if (isAuthentic && role !== allowedRole) {
